@@ -5,7 +5,7 @@ namespace SupplyChain
 {
     public static class Recipe
     {
-        public enum ID { Recipe1 };
+        public enum ID { SmeltIron, SmeltCopper, SmeltSteel };
 
         [Serializable]
         public struct Data
@@ -28,7 +28,9 @@ namespace SupplyChain
 
         private static readonly Dictionary<ID, Data> items = new Dictionary<ID, Data>
         {
-            { ID.Recipe1, new Data(name: "Recipe1", description: "Recipe1 description", effort: 1f, inputs: new Item.Stack[] { new Item.Stack(Item.ID.Item1, 2) }, outputs: new Item.Stack[] { new Item.Stack(Item.ID.Item2, 1) }) }
+            { ID.SmeltIron, new Data(name: "Smelt Iron", description: "Smelt iron ore into iron ingots", effort: 1.5f, inputs: new Item.Stack[] { new Item.Stack(Item.ID.IronOre, 2) }, outputs: new Item.Stack[] { new Item.Stack(Item.ID.IronIngot, 1) }) },
+            { ID.SmeltCopper, new Data(name: "Smelt Copper", description: "Smelt copper ore into copper ingots", effort: 1f, inputs: new Item.Stack[] { new Item.Stack(Item.ID.CopperOre, 2) }, outputs: new Item.Stack[] { new Item.Stack(Item.ID.CopperIngot, 1) }) },
+            { ID.SmeltSteel, new Data(name: "Smelt Steel", description: "Smelt iron ore and coal into steel ingots", effort: 2f, inputs: new Item.Stack[] { new Item.Stack(Item.ID.IronOre, 2), new Item.Stack(Item.ID.Coal, 1) }, outputs: new Item.Stack[] { new Item.Stack(Item.ID.SteelIngot, 1) }) },
         };
 
         public static Data Get(ID recipeId)

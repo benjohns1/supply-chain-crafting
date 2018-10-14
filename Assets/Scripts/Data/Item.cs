@@ -5,7 +5,7 @@ namespace SupplyChain
 {
     public static class Item
     {
-        public enum ID { Item1, Item2 };
+        public enum ID { None, IronOre, CopperOre, Coal, IronIngot, CopperIngot, SteelIngot };
 
         [Serializable]
         public struct Data
@@ -42,8 +42,13 @@ namespace SupplyChain
 
         private static readonly Dictionary<ID, Data> items = new Dictionary<ID, Data>
         {
-            { ID.Item1, new Data(name: "Item1", description: "Item1 description") },
-            { ID.Item2, new Data(name: "Item2", description: "Item2 description") },
+            { ID.None, new Data(name: "None", description: "No item") },
+            { ID.IronOre, new Data(name: "Iron Ore", description: "Iron ore") },
+            { ID.CopperOre, new Data(name: "Copper Ore", description: "Copper ore") },
+            { ID.Coal, new Data(name: "Coal", description: "Coal") },
+            { ID.IronIngot, new Data(name: "Iron Ingot", description: "Iron ingot") },
+            { ID.CopperIngot, new Data(name: "Copper Ingot", description: "Copper ingot") },
+            { ID.SteelIngot, new Data(name: "Steel Ingot", description: "Steel ingot") },
         };
 
         public static Data Get(ID itemId)
