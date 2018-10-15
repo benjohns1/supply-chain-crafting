@@ -1,10 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SupplyChain
 {
     public class ConnectorInComponent : MonoBehaviour
     {
-        public Guid Guid;
+        public int Guid;
     }
 }

@@ -33,16 +33,55 @@ namespace SupplyChain
             foreach (Item.Stack stack in itemsToAdd)
             {
                 int index = newItems.FindIndex(i => i.Id == stack.Id);
-                if (index < 0)
+                if (index >= 0)
                 {
-                    newItems.Add(new Item.Stack(stack.Id, stack.Amount));
+                    newItems[index] = newItems[index].AddTo(stack.Amount);
                     continue;
                 }
-                newItems[index] = newItems[index].AddTo(stack.Amount);
+                int openIndex = newItems.FindIndex(i => i.Id == Item.ID.None || i.Amount <= 0);
+                if (openIndex >= 0)
+                {
+                    newItems[openIndex] = new Item.Stack(stack);
+                    continue;
+                }
+                newItems.Add(new Item.Stack(stack));
             }
 
             allAdded = true;
             return newItems.ToArray();
+        }
+
+        public static bool ContainsAll(Item.Stack[] haystack, Item.Stack[] needles)
+        {
+            List<Item.Stack> searchable = new List<Item.Stack>(haystack);
+            foreach (Item.Stack needle in needles)
+            {
+                bool found = false;
+                int remainingAmountToFind = needle.Amount;
+                for (int i = 0; i < searchable.Count; i++)
+                {
+                    Item.Stack stack = searchable[i];
+                    if (stack.Id != needle.Id)
+                    {
+                        continue;
+                    }
+
+                    if (remainingAmountToFind <= stack.Amount)
+                    {
+                        searchable[i] = new Item.Stack(stack.Id, stack.Amount - remainingAmountToFind);
+                        found = true;
+                        break;
+                    }
+
+                    remainingAmountToFind = remainingAmountToFind - stack.Amount;
+                    searchable[i] = new Item.Stack();
+                }
+                if (!found)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static Item.Stack[] RemoveIfAllAvailable(Item.Stack[] removeFrom, Item.Stack[] stacksToRemove, out bool removed)

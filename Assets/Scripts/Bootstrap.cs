@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Entities;
+using System.Collections.Generic;
+using System;
 
 namespace SupplyChain
 {
@@ -31,18 +33,38 @@ namespace SupplyChain
             var settingsGO = GameObject.Find("Settings");
             Settings = settingsGO?.GetComponent<Settings>() ?? new Settings();
 
+            // Initialize hybrid factory archetype with components from initial factory settings
             FactorySettings[] factories = GameObject.FindObjectsOfType<FactorySettings>();
             EntityManager em = World.Active.GetOrCreateManager<EntityManager>();
+            List<GameObject> outputConnectedGos = new List<GameObject>();
             foreach (FactorySettings factory in factories)
             {
                 GameObject go = factory.gameObject;
                 go.AddComponent<EnabledRecipesComponent>().Recipes = factory.EnabledRecipes;
-                go.AddComponent<ProcessComponent>();
-                go.AddComponent<ItemBufferInComponent>().ItemBuffer = Inventory.StackSettings.GetStacks(factory.StartingInputItems);
-                go.AddComponent<ItemBufferOutComponent>().ItemBuffer = new Item.Stack[1]; // default buffer size of 1
+                go.AddComponent<ProcessComponent>().ItemBufferIn = Inventory.StackSettings.GetStacks(factory.StartingInputItems);
                 go.AddComponent<ConnectorInComponent>();
-                go.AddComponent<ConnectorOutComponent>();
-                GameObjectEntity.AddToEntityManager(em, go); // hybrid ECS
+                if (factory.OutputConnected != null)
+                {
+                    outputConnectedGos.Add(go);
+                }
+            }
+
+            // Connect inputs/outputs from initial factory settings
+            foreach (GameObject go in outputConnectedGos)
+            {
+                ConnectorInComponent otherConnector = go.GetComponent<FactorySettings>()?.OutputConnected?.GetComponent<ConnectorInComponent>();
+                if (otherConnector != null)
+                {
+                    int guid = Guid.NewGuid().GetHashCode();
+                    otherConnector.Guid = guid;
+                    go.AddComponent<ConnectorOutComponent>().OtherConnectorGuid = guid;
+                }
+            }
+
+            // Add game objects with initialized components to ECS
+            foreach (FactorySettings factory in factories)
+            {
+                GameObjectEntity.AddToEntityManager(em, factory.gameObject); // hybrid ECS
             }
         }
     }

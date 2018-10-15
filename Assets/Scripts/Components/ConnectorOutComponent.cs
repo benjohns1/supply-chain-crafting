@@ -1,10 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SupplyChain
 {
     public class ConnectorOutComponent : MonoBehaviour
     {
-        public Guid? OtherConnectorGuid;
+        public int OtherConnectorGuid;
     }
 }

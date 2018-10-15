@@ -38,6 +38,11 @@ namespace SupplyChain
             {
                 return new Stack(Id, Amount + amount);
             }
+
+            public override string ToString()
+            {
+                return string.Format("{0} {1}", Amount, Id.ToString());
+            }
         };
 
         private static readonly Dictionary<ID, Data> items = new Dictionary<ID, Data>

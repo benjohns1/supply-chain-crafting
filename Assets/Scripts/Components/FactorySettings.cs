@@ -7,6 +7,9 @@ namespace SupplyChain
         public Recipe.ID[] EnabledRecipes;
         public Inventory.StackSettings[] StartingInputItems;
         public Color IdleTint = Color.white;
-        public Color RunningTint = Color.green;
+        public Color ActiveTint = Color.green;
+        public Color CompleteTint = Color.blue;
+        public Color BlockedTint = Color.red;
+        public GameObject OutputConnected;
     }
 }
