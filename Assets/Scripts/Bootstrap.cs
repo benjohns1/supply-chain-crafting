@@ -32,10 +32,10 @@ namespace SupplyChain
         {
             var settingsGO = GameObject.Find("Settings");
             Settings = settingsGO?.GetComponent<Settings>() ?? new Settings();
+            EntityManager em = World.Active.GetOrCreateManager<EntityManager>();
 
             // Initialize hybrid factory archetype with components from initial factory settings
-            FactorySettings[] factories = GameObject.FindObjectsOfType<FactorySettings>();
-            EntityManager em = World.Active.GetOrCreateManager<EntityManager>();
+            FactorySettings[] factories = UnityEngine.Object.FindObjectsOfType<FactorySettings>();
             List<GameObject> outputConnectedGos = new List<GameObject>();
             foreach (FactorySettings factory in factories)
             {
@@ -61,10 +61,20 @@ namespace SupplyChain
                 }
             }
 
+            // Setup players
+            PlayerSettings[] players = UnityEngine.Object.FindObjectsOfType<PlayerSettings>();
+
             // Add game objects with initialized components to ECS
             foreach (FactorySettings factory in factories)
             {
-                GameObjectEntity.AddToEntityManager(em, factory.gameObject); // hybrid ECS
+                Entity factoryEntity = GameObjectEntity.AddToEntityManager(em, factory.gameObject); // hybrid ECS
+                em.AddComponentData(factoryEntity, new Interactable { Focus = 0 });
+            }
+
+            foreach (PlayerSettings player in players)
+            {
+                Entity playerEntity = GameObjectEntity.AddToEntityManager(em, player.gameObject);
+                em.AddComponentData(playerEntity, new Interactor());
             }
         }
     }
